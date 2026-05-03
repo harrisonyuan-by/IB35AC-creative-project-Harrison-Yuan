@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>A Story of Our Journey and Genetic Gifts</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="format.css"/>
+</head>
+<body>
+<div id="layout">
+  <div id="map"></div>
+  <div id="panel">
+    <div id="img-wrap">
+      <img id="img" src="" alt=""/>
+      <img id="img2" src="" alt=""/>
+    </div>
+    <p id="credit"></p>
+    <div id="panel-text">
+      <div id="slide-num"></div>
+      <h2 id="title"></h2>
+      <p id="time"></p>
+      <p id="text"></p>
+      <div id="controls"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+
+const slides = {
+  "cover": {
+    title: "A Story of Our Journey and Genetic Gifts",
+    lat: 20, lng: 40, zoom: 2,
+    img: "Out-of-africa-theory.jpg",
+    text: "Our DNA is an unfinished history book. As we travelled out of Africa, every encounter with our 'cousins' leaves gifts in our genes, which help us survive and thrive",
+    next: "start",
+    isCover: true
+  },
+  "start": {
+    title: "THE ROOTS",
+    time: "300,000 years ago",
+    lat: 11.45, lng: 40.52, zoom: 4,
+    img: "347_1352_f1.jpeg",
+    img2: "347_1352_f2.jpeg",
+    credit: "credit: Villmoare et al., 2015, Science, 347(6228), 1352–1355",
+    text: "Before we traveled the world, Africa was our home for millions of years. Scientists found a 2.8-million-year-old jawbone in Ethiopia (the Ledi-Geraru find), which marks the very beginning of our genus, .Homo \n\nWhile our own species, Homo sapiens, only appeared about 300,000 years ago, this ancient fossil shows that the human lineage has been evolving and adapting to the African environment for nearly 3 million years before some of us finally decided to leave.",
+    next: "exodus"
+  },
+  "exodus": {
+    title: "The First Step Out",
+    time: "177,000 years ago",
+    lat: 32.79, lng: 34.99, zoom: 7,
+    img: "",
+    text: "For a long time, scientists thought humans left Africa 60,000 years ago. But this fossil, a partial upper jaw found right here in Misliya Cave, changed everything.\n\nDating back to 177,000 years ago, it is the oldest Homo sapiens fossil ever found outside of Africa!\n\nStanding here at the gateway of Eurasia, our ancestors faced a monumental choice. Which path will you take?",
+    choices: [
+      { label: "→ Go West: Into Europe", next: "europe" },
+      { label: "→ Go East: Into Asia", next: "asia" }
+    ]
+  },
+  "europe": {
+    title: "GIFT FROM NEANDERTHALS",
+    lat: 46.3, lng: 16.07, zoom: 4,
+    img: "65beda32-3cba-492d-8cdb-91ee47693cde.jpg",
+    credit: "Image source: Copyright NMNH, Smithsonian Institution",
+    text: "As humans moved further North and West into Europe, the environment changed drastically. It was colder, darker, and filled with pathogens our ancestors' African bodies didn't recognize. \n\nHere, we met our most famous cousins: the Neanderthals. They had been the masters of Europe for over 400,000 years, surviving ice ages and local plagues. \n\nUnlike the single gene from our earlier encounter, Neanderthals provided a massive 'immune system patch.' Through interbreeding, we acquired multiple versions of HLA-A and HLA-C genes. These genes were already 'pre-tuned' to fight European viruses. ",
+    next: "reference"
+  },
+  "asia": {
+    title: "EARLIEST GIFT",
+    lat: 51.39, lng: 84.67, zoom: 5,
+    img: "",
+    text: "When modern humans arrived in West Asia, they encountered a major biological threat: local pathogens their African immune systems couldn't recognize. By interbreeding with archaic cousins like the Denisovans, we acquired the HLA-B*73 gene. \n\nThis 'First Gift' gave us an instant immune shield. Today, this ancient DNA remains a vital part of the immune system for billions of people living outside of Africa, helping our cells identify and destroy dangerous viruses.",
+    next: "tibetan"
+  },
+  "tibetan": {
+    title: "A GIFT FROM THE HEIGHTS",
+    lat: 35.45, lng: 102.66, zoom: 5,
+    img: "41586_2019_1139_Fig4_ESM.jpg",
+    text: "For years, the Denisovan EPAS1 gene was a mystery — why would a lowland species have a high-altitude gene? The Xiahe mandible, found in a cave right here in Gansu, China, provided the missing link. It proved that Denisovans had been the guardians of the Plateau for over 160,000 years, long before we arrived to inherit their legacy. \n\nAs modern humans pushed deeper into Asia, they faced one of the most extreme environments on Earth: the high-altitude Tibetan Plateau. At 4,000 meters above sea level, the air is dangerously thin, and most humans would suffer from life-threatening altitude sickness. \n\nOnce again, the secret to our survival lay in our ancient cousins, the Denisovans. By interbreeding with them, our ancestors acquired a specific version of the EPAS1 gene. \n\nThis gene acts like a 'super-athlete's pump.' It regulates how the body reacts to low oxygen, allowing people to live at extreme altitudes without their blood thickening into dangerous clots.",
+    next: "oceania"
+  },
+  "oceania": {
+  title: "THE DEEPEST GIFT",
+  time: "50,000 years ago",
+  lat: -5.0, lng: 131.0, zoom: 4,
+  img: "e86a0e45-ca8f-4ba5-94d2-ae63b2e44a6b.jpg",
+  text: "To reach Australia, our ancestors did something no human had ever done before — they crossed at least 70 kilometers of open ocean, with no land in sight. This was the first great sea voyage in human history.\n\nBut the journey held a surprise. Somewhere in Southeast Asia, they encountered a mysterious group of Denisovans — a population unlike any we had met before.\n\nThe result? Australian Aboriginals and Papuans carry 3–6% Denisovan DNA — the highest proportion of any people on Earth, far exceeding the 0.2% found in East Asians. The Ayta Magbukon people of the Philippines carry as much as 5%.\n\nThis hidden encounter left its mark on the immune systems of millions. The Denisovan DNA found in Oceanian peoples includes variants linked to immune response against tropical pathogens, gifts perfectly suited to surviving a new and dangerous world.",
+  next: "reference"
+  },
+  "reference": {
+    title: "References",
+    time: "",
+    lat: 20, lng: 40, zoom: 2,
+    img: "",
+    text: "1.	Nielsen, R., Akey, J., Jakobsson, M. et al. Tracing the peopling of the world through genomics. Nature 541, 302–310 (2017). \n\n2.	Villmoare, B., Kimbel, W. H., Seyoum, C., Campisano, C. J., DiMaggio, E. N., Rowan, J., Braun, D. R., Arrowsmith, J. R., & Reed, K. E. (2015). Early Homo at 2.8 Ma from Ledi-Geraru, Afar, Ethiopia. Science, 347(6228), 1352–1355. https://doi.org/10.1126/science.aaa1343 \n\n3.	Hershkovitz, I., Weber, G. W., Quam, R., Carretero, J. M., Elyashiv, R., Yeshurun, R., Gethin, P. K., Slon, V., Rodriguez, L., Zaidner, Y., Akesson, M. S., Falguères, C., Kinsley, L., Pekelmam, A., Puaud, S., Grün, R., Fornai, C., Rochette, P., Cassiani, J.-L., . . . Reed, K. E. (2018). The earliest modern humans outside Africa. Science, 359(6374), 456–459. https://doi.org/10.1126/science.aap8369 \n\n4.	Abi-Rached, L., Jobin, M. J., Kulkarni, S., McWhinnie, A., Dalva, K., Gragert, L., Babrzadeh, F., Gharizadeh, B., Ronaghi, M., Yee-Carey, C., Guethlein, L. A., Hollenbach, J. A., Casane, D., Nelson, G. W., Norman, P. J., & Parham, P. (2011). The shaping of modern human immune systems by multiregional admixture with archaic humans. Science, 334(6052), 89–94. https://doi.org/10.1126/science.1209202 \n\n5.	Prufer, K., de Filippo, C., Grote, S., Mafessoni, F., Korlević, P., Hajdinjak, M., Vernot, B., Skov, L., Hsieh, P., Diez-del-Molino, D., ... & Pääbo, S. (2017). A high-coverage Neandertal genome from Vindija Cave in Croatia. Science, 358(6363), 655–658. https://doi.org/10.1126/science.aao1887 \n\n6.	Huerta-Sánchez, E., Jin, X., Asan et al. Altitude adaptation in Tibetans caused by introgression of Denisovan-like DNA. Nature 512, 194–197 (2014). https://doi.org/10.1038/nature13408 \n\n7. Chen, F., Welker, F., Shen, CC. et al. A late Middle Pleistocene Denisovan mandible from the Tibetan Plateau. Nature 569, 409–412 (2019). https://doi.org/10.1038/s41586-019-1139-x \n\n8. Reich, D., Patterson, N., Kircher, M., Delfin, F., Nandineni, M. R., Pugach, I., ... & Stoneking, M. (2011). Denisova admixture and the first modern human dispersals into Southeast Asia and Oceania. American Journal of Human Genetics, 89(4), 516–528. https://doi.org/10.1016/j.ajhg.2011.09.005 \n\n9. Larena, M., Sanchez-Quinto, F., Sjödin, P., McKenna, J., Ebeo, C., Reyes, R., ... & Jakobsson, M. (2021). Multiple migrations to the Philippines during the last 50,000 years. PNAS, 118(13). https://doi.org/10.1073/pnas.2026132118",
+    next: null,
+    isReference: true
+  }
+}
+
+const startId = "cover"
+
+const map = L.map('map').setView([20, 40], 3)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map)
+
+const marker = L.circleMarker([0,0], {
+  radius: 10,
+  color: '#c0392b',
+  fillColor: '#c0392b',
+  fillOpacity: 0.85
+}).addTo(map)
+
+const layout = document.getElementById('layout')
+const panel = document.getElementById('panel')
+
+let history = []
+let currentLine = null
+let overviewMarkers = []
+
+function goTo(id) {
+  const s = slides[id]
+  if (!s) return
+
+  overviewMarkers.forEach(m => map.removeLayer(m))
+  overviewMarkers = []
+
+  if (s.isCover || s.isReference) {
+    Object.entries(slides).forEach(([key, slide]) => {
+      if (key === 'cover' || key === 'reference') return
+      const m = L.circleMarker([slide.lat, slide.lng], {
+        radius: 6,
+        color: '#c0392b',
+        fillColor: '#c0392b',
+        fillOpacity: 0.7,
+        weight: 1.5
+      }).addTo(map)
+      overviewMarkers.push(m)
+    })
+    marker.setStyle({ opacity: 0, fillOpacity: 0 })
+  } else {
+    marker.setStyle({ opacity: 1, fillOpacity: 0.85 })
+  }
+
+  if (currentLine) map.removeLayer(currentLine)
+
+  const prev = history[history.length - 1]
+  if (prev && slides[prev]) {
+    currentLine = L.polyline(
+      [[slides[prev].lat, slides[prev].lng], [s.lat, s.lng]],
+      { color: '#c0392b', weight: 2, dashArray: '6 4' }
+    ).addTo(map)
+  }
+
+  map.flyTo([s.lat, s.lng], s.zoom, { duration: 1.5 })
+  marker.setLatLng([s.lat, s.lng])
+
+  document.getElementById('title').textContent = s.title
+  document.getElementById('time').textContent = s.time || ''
+  document.getElementById('text').textContent = s.text || ''
+
+  const img = document.getElementById('img')
+  const img2 = document.getElementById('img2')
+
+  if (s.img2) {
+    img.style.width = '50%'
+    img2.style.width = '50%'
+    img2.src = s.img2
+    img2.style.display = 'block'
+  } else {
+    img.style.width = '100%'
+    img2.style.display = 'none'
+  }
+
+if (s.img) { img.src = s.img; img.style.display = 'block' }
+else { img.style.display = 'none' }
+  document.getElementById('credit').textContent = s.credit || ''
+
+  const controls = document.getElementById('controls')
+  controls.innerHTML = ''
+
+  if (history.length > 0) {
+    const btn = document.createElement('button')
+    btn.textContent = '← BACK'
+    btn.onclick = () => {
+      history.pop()
+      const prevId = history[history.length - 1] || startId
+      goTo(prevId)
+    }
+    controls.appendChild(btn)
+  }
+
+  if (s.choices) {
+    s.choices.forEach(c => {
+      const btn = document.createElement('button')
+      btn.textContent = c.label
+      btn.className = 'choice-btn'
+      btn.onclick = () => {
+        history.push(id)
+        goTo(c.next)
+      }
+      controls.appendChild(btn)
+    })
+  } else if (s.next) {
+    const btn = document.createElement('button')
+    btn.textContent = 'NEXT →'
+    btn.onclick = () => {
+      history.push(id)
+      goTo(s.next)
+    }
+    controls.appendChild(btn)
+  } else {
+    const p = document.createElement('p')
+    p.textContent = '— END OF THIS ROUTE —'
+    controls.appendChild(p)
+  }
+}
+
+goTo(startId)
+</script>
+</body>
+</html>
