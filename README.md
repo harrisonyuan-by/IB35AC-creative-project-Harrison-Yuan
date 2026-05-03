@@ -8,6 +8,9 @@ Click the link below to open the interactive Storymap:
 - HTML & JavaScript: `106_YuanHarrison_A_Story_of_Our_Journey_and_Genetic_Gifts.html`
 - CSS: `format.css`
 
+## View the Annotated Bibliography
+The file named `106_YuanHarrison_annotatedbibliography.docx`
+
 ## How to Use
 1. Click NEXT to move through the story
 2. At the crossroads, choose between the European or Asian route
